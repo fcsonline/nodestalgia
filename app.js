@@ -30,10 +30,15 @@ app.listen('8081');
 var spawn = require('child_process').spawn;
 var tail = spawn('tail', ['-f', filename]);
 
+// 127.0.0.1 - - [07/Mar/2012:23:21:47 +0100] "GET / HTTP/1.0" 200 454 "-" "ApacheBench/2.3"
+var regexp = /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+\[(.+)\] "(\w+) ([^ ]+) .*" (\w+) (\w+)/g;
+
 tail.stdout.on('data', function (data) {
   var str = data.toString('utf8');
-  var regexp = /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+\[(.+)\] /g;
   var match = regexp.exec(str);
-  var robj = {ip: match[1], time: match[2]};
-  io.sockets.emit('log', JSON.stringify(robj));
+
+  if (match !== null) {
+    var robj = {ip: match[1], time: match[2], method: match[3], path: match[4], result: match[5], size: match[6]};
+    io.sockets.emit('log', JSON.stringify(robj));
+  }
 });

@@ -1,15 +1,17 @@
 /**
- *   Liquid particles canvas experiment
- *   ©2010 spielzeugz.de 
+ *   Nodestalgia websocket & canvas experiment
+ *   2012 fcsonline
  */
 (function(){
 
  var PI_2        = Math.PI * 2;
+ var MAX_MSG_TTL = 50;
 
  var canvasW     = 1000;
  var canvasH     = 560;
  var friction    = 0.99;
  var requests    = [];
+ var messages    = [];
  var total       = 0;
 
  var canvas;
@@ -52,7 +54,10 @@
    var Mrnd = Math.random;
    var Mabs = Math.abs;
 
+   // Obsolete arrays
    var orequests = [];
+   var omessages = [];
+
    var i = requests.length;
    while ( i-- ){
      var m  = requests[i];
@@ -79,10 +84,18 @@
      if ( nextX > canvasW ){
        nextX = canvasW;
        vX *= -1;
+
+       // Push a new message
+       var msg = new Message();
+       msg.x   = nextX - 50;
+       msg.y   = nextY;
+       msg.color = m.color;
+       msg.text  = m.req.result;
+       msg.ttl = MAX_MSG_TTL; // Aprox: 1.5s
+       messages.push(msg);
+
      } else if ( nextX < 0 ){
        orequests.push(i);
-       // nextX = 0;
-       // vX *= -1;
      }
 
      if ( nextY > canvasH ){
@@ -98,33 +111,76 @@
      m.x  = nextX;
      m.y  = nextY;
 
-     ctx.fillStyle = m.color;
+     // Reset shadows
+     ctx.shadowBlur = 0;
+
+     ctx.fillStyle = colorDef(m.color);
      ctx.beginPath();
      ctx.arc( nextX , nextY , sc , 0 , PI_2 , true );
      ctx.closePath();
      ctx.fill();
    }
 
-    var x = canvasW - 60;
-    var y = canvasH - 5;
-    ctx.font = "10pt Arial";
-    ctx.fillStyle = "#ffffff"; // text color
-    ctx.fillText(pad(total, 8), x, y);
+   // HTTP Result labels
+   var j = messages.length;
+   ctx.font = "9pt Arial";
+   ctx.shadowColor = "#fff";
+   ctx.shadowOffsetX = 0;
+   ctx.shadowOffsetY = 0;
 
-   // Remove obsolete requests
+   while ( j-- ){
+     var msg  = messages[j];
+
+     if (--msg.ttl > 0){
+        ctx.fillStyle = colorDef(msg.color, msg.ttl / MAX_MSG_TTL);
+        ctx.shadowBlur = msg.ttl / 5;
+        ctx.fillText(msg.text, msg.x, msg.y);
+     } else {
+       omessages.push(j);
+     }
+
+   }
+
+   // Total label
+   var x = canvasW - 60;
+   var y = canvasH - 5;
+   ctx.font = "10pt Arial";
+   ctx.fillStyle = "#ffffff";
+   ctx.fillText(pad(total, 8), x, y);
+
+   // Remove obsolete requests & messages
    requests = $.grep(requests, function(n, i){
       return $.inArray(i, orequests);
+   });
+
+   messages = $.grep(messages, function(n, i){
+      return $.inArray(i, omessages);
    });
 
  }
 
  function RemoteRequest(){
-   this.color = "rgb(" + Math.floor( Math.random()*155 + 100 ) + "," + Math.floor( Math.random()*155 + 100 ) + "," + Math.floor( Math.random()*155 + 100 ) + ")";
+   this.color = {r: Math.floor( Math.random()*155 + 100 ), g: Math.floor( Math.random()*155 + 100 ), b: Math.floor( Math.random()*155 + 100 )};
    this.x     = 0;
    this.y     = 0;
    this.vX    = 0;
    this.vY    = 0;
    this.size  = 5;
+   this.req   = null; // Filled by websocket
+ }
+
+  function colorDef(obj, alpha){
+    if (alpha !== undefined) {
+      return "rgba(" + obj.r  + "," + obj.g + "," + obj.b + "," + alpha + ")";
+    } else {
+      return "rgb(" + obj.r  + "," + obj.g + "," + obj.b + ")";
+    }
+  }
+
+ function Message(){
+   this.x     = 0;
+   this.y     = 0;
+   this.text  = "";
  }
 
  function rect( context , x , y , w , h ){
@@ -149,7 +205,7 @@
  var socket = io.connect('localhost', {port:8081});
  socket.on('log', function (data) {
      var robj = JSON.parse(data);
-     console.log(robj);
+     // console.log(robj);
 
      var i = requests.length;
      var m = new RemoteRequest();
@@ -157,6 +213,7 @@
      m.y   = Math.floor( Math.random() * (canvasH - 30) + 30 ); // canvasH * 0.5;
      m.vX  = Math.random() * 50 + 10;
      m.vY  = 0; //Math.sin(i) * Math.random() * 34;
+     m.req = robj;
      requests.push(m);
 
      ++total;
