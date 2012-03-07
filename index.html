@@ -4,21 +4,39 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <script src="reqscanvas.js" type="text/javascript"></script>
+    <script src="json2.js" type="text/javascript"></script>
 
     <style>
-      html, body {
-        padding: 0;
-        margin: 0;
+      html, body{
+          height:100%;
+          margin:0;
+          padding:0;
       }
+      body {
+
+        width:100%;
+
+        display: -webkit-box;
+        display: -moz-box;
+
+        -webkit-box-orient: vertical;
+        -moz-box-orient: vertical;
+      }
+
+      body header,body section, body footer{
+          display:block;
+          -webkit-box-flex: 1;
+          -moz-box-flex: 1;
+          -moz-box-sizing:border-box;
+          -webkit-box-sizing:border-box;
+      }
+
     </style>
 
   </head>
   <body>
-    <div id="outer">
-      <div id="canvasContainer">
-        <canvas id="mainCanvas" width="1000" height="560"></canvas>
-        <div id="output"></div>
-      </div>
-    </div>
+    <section id="canvasContainer">
+        <canvas id="mainCanvas"></canvas>
+    </section>
   </body>
 </html>
