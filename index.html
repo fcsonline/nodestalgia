@@ -1,12 +1,19 @@
 <html>
   <head>
+    <title>Nodestalgia</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <script src="reqscanvas.js" type="text/javascript"></script>
 
+    <style>
+      html, body {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+
   </head>
   <body>
-    <div id="log">Resultado do tail</div>
     <div id="outer">
       <div id="canvasContainer">
         <canvas id="mainCanvas" width="1000" height="560"></canvas>

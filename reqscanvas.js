@@ -8,9 +8,8 @@
 	
 	var canvasW     = 1000;
 	var canvasH     = 560;
-	var numRemoteRequests   = 600;
 	var friction    = 0.96;
-	var movers      = [];
+	var requests      = [];
 	
 	var canvas;
 	var ctx;
@@ -32,10 +31,9 @@
 		if ( canvas.getContext ){
 			setup();
 			setInterval( run , 33 );
-			trace('interact with the mouse, occasionally click or hold down the mousebutton<br>More here: <a href="http://www.spielzeugz.de/lab">spielzeugz.de/lab</a> &nbsp; | &nbsp; Follow us on <a href="http://www.twitter.com/spielzeugz" target="_blank">Twitter</a> or <a href="http://plus.google.com/116743952899287181520" target="_blank">Google+</a>');
 		}
 		else{
-			trace("Sorry, needs a recent version of Chrome, Firefox, Opera, Safari, or Internet Explorer 9.");
+			alert("Sorry, needs a recent version of Chrome, Firefox, Opera, Safari, or Internet Explorer 9.");
 		}
 	}
 	   
@@ -43,16 +41,6 @@
 		outerDiv  = document.getElementById("outer");
 		canvasDiv = document.getElementById("canvasContainer");
 		ctx       = canvas.getContext("2d");
-		
-		var i = numRemoteRequests;
-		while ( i-- ){
-			var m = new RemoteRequest();
-			m.x   = canvasW * 0.5;
-			m.y   = canvasH * 0.5;
-			m.vX  = Math.cos(i) * Math.random() * 34;
-			m.vY  = Math.sin(i) * Math.random() * 34;
-			movers[i] = m;
-		}
 		
 		mouseX = prevMouseX = canvasW * 0.5;
 		mouseY = prevMouseY = canvasH * 0.5;
@@ -80,9 +68,9 @@
 		var Mrnd = Math.random;
 		var Mabs = Math.abs;
 		
-		var i = numRemoteRequests;
+		var i = requests.length;
 		while ( i-- ){
-			var m  = movers[i];
+			var m  = requests[i];
 			var x  = m.x;
 			var y  = m.y;
 			var vX = m.vX;
@@ -207,8 +195,16 @@
   // Establish the websocket connection
   var socket = io.connect('localhost', {port:8081});
   socket.on('log', function (data) {
-    $('#log').append('<br />' + data);
-    console.log(data);
+    // $('#log').append('<br />' + data);
+    // console.log(data);
+
+    var i = requests.length;
+    var m = new RemoteRequest();
+    m.x   = canvasW * 0.5;
+    m.y   = canvasH * 0.5;
+    m.vX  = Math.cos(i) * Math.random() * 34;
+    m.vY  = Math.sin(i) * Math.random() * 34;
+    requests.push(m);
   });
 	
 })();
