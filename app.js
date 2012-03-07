@@ -4,14 +4,14 @@ var path = require('path');
 
 app.listen('8081');
 
+
 if (process.argv[2] != undefined){
    filename = process.argv[2];
    if (!path.existsSync(filename)){
       throw(filename + ' does not exists');
    }
-}
-else {
-   filename = 'log.out'
+} else {
+  filename = '/var/log/apache2/access.log'
 }
 
 app.get('/', function(req, res) {
