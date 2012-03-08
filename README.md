@@ -11,7 +11,7 @@ Modules express and socket.io installed
     npm install express socket.io
 
 ### Setup
-    clone git@github.com:fcsonline/nodestalgia.git
+    git clone git@github.com:fcsonline/nodestalgia.git
     cd nodestalgia
 
 ### Running
