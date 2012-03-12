@@ -18,6 +18,10 @@
  var ctx;
  var canvasDiv;
 
+ var longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+ var longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+
  function init(){
    canvas = $("#mainCanvas")[0];
 
@@ -148,6 +152,11 @@
    ctx.fillStyle = "#ffffff";
    ctx.fillText(pad(total, 8), x, y);
 
+   // Date display
+   var date = new Date();
+   ctx.fillText(getDateDisplay(date), 5, 15);
+   ctx.fillText(getTimeDisplay(date), 5, 35);
+
    // Remove obsolete requests & messages
    requests = $.grep(requests, function(n, i){
       return $.inArray(i, orequests);
@@ -197,6 +206,16 @@
    }
 
    return str;
+ }
+
+ function getDateDisplay(date) {
+   return longDays[date.getDay()] + ', ' + longMonths[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + '\r\n';
+ }
+
+ function getTimeDisplay(date) {
+   return (date.getHours() < 10 ? '0' : '') + date.getHours() + ':' +
+            (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ':' +
+            (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
  }
 
  window.onload = init;
