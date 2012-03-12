@@ -11,6 +11,7 @@
  var canvasH     = 560;
  var friction    = 0.99;
  var requests    = [];
+ var typerequests= {};
  var messages    = [];
  var total       = 0;
 
@@ -46,6 +47,11 @@
    console.log ("Initialize canvas with size: " + canvasW + "x" + canvasH);
 
    ctx = canvas.getContext("2d");
+
+   // Init label display responses
+   typerequests['200'] = 0;
+   typerequests['404'] = 0;
+   typerequests['304'] = 0;
  }
 
  function run(){
@@ -145,13 +151,20 @@
 
    }
 
-   // Total label
-   var x = canvasW - 60;
+   // Type requests and total label
+   var st = '';
+
+   st += ' HTTP OK: ' + pad(typerequests['200'], 7);
+   st += ' HTTP NOT FOUND: ' + pad(typerequests['404'], 5);
+   st += ' HTTP NOT MODIFIED: ' + pad(typerequests['304'], 5);
+   st += ' TOTAL: ' + pad(total, 8);
+
+   var x = canvasW - 600;
    var y = canvasH - 5;
    ctx.font = "10pt Arial";
    ctx.shadowBlur = 0;
    ctx.fillStyle = "#ffffff";
-   ctx.fillText(pad(total, 8), x, y);
+   ctx.fillText(st, x, y);
 
    // Date display
    var date = new Date();
@@ -226,6 +239,12 @@
  socket.on('log', function (data) {
      var robj = JSON.parse(data);
      // console.log(robj);
+
+     if (typerequests[robj.result] === undefined) {
+       typerequests[robj.result] = 0;
+     }
+
+     typerequests[robj.result]++;
 
      var i = requests.length;
      var m = new RemoteRequest();
