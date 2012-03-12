@@ -149,6 +149,7 @@
    var x = canvasW - 60;
    var y = canvasH - 5;
    ctx.font = "10pt Arial";
+   ctx.shadowBlur = 0;
    ctx.fillStyle = "#ffffff";
    ctx.fillText(pad(total, 8), x, y);
 
