@@ -24,5 +24,6 @@ or
 
 By default Nodestalgia follows /var/log/apache2/access.log
 
-Access http://<remote host>:8081
+Access:
+    http://remote_host:8081
 
