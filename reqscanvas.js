@@ -104,6 +104,20 @@
        msg.ttl = MAX_MSG_TTL; // Aprox: 1.5s
        messages.push(msg);
 
+       var g = ctx.createRadialGradient(nextX,nextY,m.size,nextX,nextY,m.size*10);
+       g.addColorStop(0,"rgba(" + m.color.r + "," + m.color.g + "," + m.color.b + "," + 1 +")");
+       g.addColorStop(0.2,"rgba(" + m.color.r + "," + m.color.g + "," + m.color.b + ", 0.4)");
+       g.addColorStop(1.0,"rgba(255,255,255,0.1)");
+
+       ctx.save();
+       ctx.fillStyle = g;
+       //ctx.fillStyle = colorDef(m.color);
+       //ctx.scale(3, 0.75); // Elipse
+       ctx.beginPath();
+       ctx.arc(nextX, nextY, sc*10, 0, PI_2, false);
+       ctx.fill();
+       ctx.restore();
+
      } else if ( nextX < 0 ){
        orequests.push(i);
      }
