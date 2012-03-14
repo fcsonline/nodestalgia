@@ -22,13 +22,15 @@
  var longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
  var longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+ var intervalId = null;
+ var intervalLoopTime = 33;
 
  function init(){
    canvas = $("#mainCanvas")[0];
 
    if ( canvas.getContext ){
      setup();
-     setInterval( run , 33 );
+     intervalId = setInterval( run , intervalLoopTime );
    }
    else{
      alert("Sorry, needs a recent version of Chrome, Firefox, Opera, Safari, or Internet Explorer 9.");
@@ -271,5 +273,18 @@
 
      ++total;
  });
+
+// Pause
+$(document).bind('keypress', function(e){
+  var unicode=e.keyCode? e.keyCode : e.charCode;
+  if (unicode == 32) {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    } else {
+      intervalId = setInterval( run , intervalLoopTime );
+    }
+  }
+});
 
 })();
