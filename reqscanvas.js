@@ -30,6 +30,7 @@
 
    if ( canvas.getContext ){
      setup();
+     resetcounters();
      intervalId = setInterval( run , intervalLoopTime );
    }
    else{
@@ -49,7 +50,9 @@
    console.log ("Initialize canvas with size: " + canvasW + "x" + canvasH);
 
    ctx = canvas.getContext("2d");
+ }
 
+ function resetcounters(){
    // Init label display responses
    typerequests['200'] = 0;
    typerequests['404'] = 0;
@@ -285,6 +288,11 @@ $(document).bind('keypress', function(e){
       intervalId = setInterval( run , intervalLoopTime );
     }
   }
+});
+
+// Resize window event
+$(window).resize(function() {
+  setup();
 });
 
 })();
