@@ -23,10 +23,17 @@
  var longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
  var intervalId = null;
- var intervalLoopTime = 33;
+ var intervalLoopTime = 30;
+
+ var speedX = 0;
 
  function init(){
-   canvas = $("#mainCanvas")[0];
+   $canvas = $("#mainCanvas");
+   canvas = $canvas[0];
+
+   // Load dynamic properties
+   intervalLoopTime = $canvas.data("frame-rate");
+   speedX           = $canvas.data("speed-x");
 
    if ( canvas.getContext ){
      setup();
@@ -265,28 +272,37 @@
 
      typerequests[robj.result]++;
 
-     var i = requests.length;
-     var m = new RemoteRequest();
-     m.x   = 0; // canvasW * 0.5;
-     m.y   = Math.floor( Math.random() * (canvasH - 30) + 30 ); // canvasH * 0.5;
-     m.vX  = Math.random() * 50 + 10;
-     m.vY  = 0; //Math.sin(i) * Math.random() * 34;
-     m.req = robj;
-     requests.push(m);
-
+     // if not paused, then add it to buffer
+     if (intervalId) {
+       var i = requests.length;
+       var m = new RemoteRequest();
+       m.x   = 0; // canvasW * 0.5;
+       m.y   = Math.floor( Math.random() * (canvasH - 30) + 30 ); // canvasH * 0.5;
+       m.vX  = Math.random() * (speedX * 0.25) + speedX;
+       m.vY  = 0; //Math.sin(i) * Math.random() * 34;
+       m.req = robj;
+       requests.push(m);
+     }
      ++total;
  });
 
 // Pause
 $(document).bind('keypress', function(e){
   var unicode=e.keyCode? e.keyCode : e.charCode;
-  if (unicode == 32) {
+
+  if (unicode == 32) { // Space - Pause
     if (intervalId) {
       clearInterval(intervalId);
       intervalId = null;
     } else {
       intervalId = setInterval( run , intervalLoopTime );
     }
+  } else if (unicode == 43){ // + more horizontal speed
+    speedX = Math.min(speedX + 5, 200);
+    console.log ("Speed X set to: " + speedX);
+  } else if (unicode == 45){ // - less horizontal speed
+    speedX = Math.max(speedX - 5, 10);
+    console.log ("Speed X set to: " + speedX);
   }
 });
 
