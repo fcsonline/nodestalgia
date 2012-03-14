@@ -5,9 +5,9 @@ Nodestalgia
 Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with Node.js, Canvas and WebSockets.
 
 ### Requirements
-Nodejs and npm installed, refer to https://github.com/joyent/node/wiki/Installation
+Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-Modules express and socket.io installed:
+Modules `express` and `socket.io` installed:
 
     npm install express socket.io
 
@@ -23,15 +23,15 @@ or
     node app.js path/to/file
     node app.js path/to/file1 path/to/file2 *
 
-By default Nodestalgia follows /var/log/apache2/access.log
+By default Nodestalgia follows `/var/log/apache2/access.log`
 
 Access:
     http://remote_host:8081
 
 ### Keyboard shortcuts
-* a
-* b
-* c
+* `space` pause
+* `+` increase the request speed
+* `-` decrease the request speed
 
 ![](http://fcsonline.github.com/nodestalgia/img/screenshot1.png)
 
