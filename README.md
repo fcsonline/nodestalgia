@@ -28,3 +28,10 @@ By default Nodestalgia follows /var/log/apache2/access.log
 Access:
     http://remote_host:8081
 
+### Keyboard shortcuts
+* a
+* b
+* c
+
+![](http://fcsonline.github.com/nodestalgia/img/screenshot1.png)
+
