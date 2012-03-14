@@ -21,6 +21,7 @@ Modules express and socket.io installed:
 or
 
     node app.js path/to/file
+    node app.js path/to/file1 path/to/file2 *
 
 By default Nodestalgia follows /var/log/apache2/access.log
 
