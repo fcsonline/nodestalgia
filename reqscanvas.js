@@ -14,6 +14,7 @@
  var requests    = [];
  var typerequests= {};
  var messages    = [];
+ var slots       = [];
  var total       = 0;
 
  var canvas;
@@ -55,7 +56,8 @@
    canvas.setAttribute("width", canvasW);
    canvas.setAttribute("height", canvasH);
 
-   console.log ("Initialize canvas with size: " + canvasW + "x" + canvasH);
+   console.log ("Initialized canvas with size: " + canvasW + "x" + canvasH);
+   console.log ("Initialized " + Math.floor(canvasH/20) + " vertical slots");
 
    ctx = canvas.getContext("2d");
  }
@@ -232,7 +234,14 @@
    this.req   = null; // Filled by websocket
  }
 
-  function colorDef(obj, alpha){
+ function Slot(){
+   this.x     = 0;
+   this.y     = 0;
+   this.count = 5;
+   this.ip    = '';
+ }
+
+ function colorDef(obj, alpha){
     if (alpha !== undefined) {
       return "rgba(" + obj.r  + "," + obj.g + "," + obj.b + "," + alpha + ")";
     } else {
@@ -272,6 +281,16 @@
             (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
  }
 
+ function findSlotByIp (ip) {
+   for (var j = 0; j < slots.length; j++) {
+      if (ip === slots[j].ip) {
+        return j;
+      }
+   }
+
+   return -1;
+ }
+
  window.onload = init;
 
  // Establish the websocket connection
@@ -291,12 +310,30 @@
        var i = requests.length;
        var m = new RemoteRequest();
        m.x   = MARGIN_LEFT; // canvasW * 0.5;
-       m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
+       // m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
        m.vX  = Math.random() * (speedX * 0.25) + speedX;
        m.vY  = 0; //Math.sin(i) * Math.random() * 34;
        m.req = robj;
        requests.push(m);
+
+       // Search a slot
+       var slotpos = findSlotByIp(robj.ip);
+
+       if (slotpos < 0) {
+         // New slot assignment
+          var slot = new Slot();
+          slot.ip = robj.ip;
+          slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
+          slots.push(slot);
+          console.log('New slot at: ' +slot.y);
+       } else {
+          slots[slotpos].count++;
+          m.y = slots[slotpos].y;
+          console.log('Recicled slot at: ' + slots[slotpos].y);
+       }
+
      }
+
      ++total;
  });
 
