@@ -6,6 +6,7 @@
 
  var PI_2        = Math.PI * 2;
  var MAX_MSG_TTL = 50;
+ var MARGIN_LEFT = 150;
 
  var canvasW     = 1000;
  var canvasH     = 560;
@@ -130,7 +131,7 @@
        ctx.fill();
        ctx.restore();
 
-     } else if ( nextX < 0 ){
+     } else if ( nextX < MARGIN_LEFT ){
        orequests.push(i);
      }
 
@@ -155,6 +156,19 @@
      ctx.arc( nextX , nextY , sc , 0 , PI_2 , true );
      ctx.closePath();
      ctx.fill();
+
+
+     ctx.save();
+     ctx.font = "9pt Arial";
+     ctx.shadowColor = "#fff";
+     ctx.shadowOffsetX = 0;
+     ctx.shadowOffsetY = 0;
+     ctx.shadowBlur = 0;
+     ctx.fillStyle = "#ffffff";
+     //ctx.fillText(st, x, y);
+     //ctx.fillStyle = "#fff";
+     ctx.fillText(m.req.ip, 10, y);
+     ctx.restore();
    }
 
    // HTTP Result labels
@@ -276,8 +290,8 @@
      if (intervalId) {
        var i = requests.length;
        var m = new RemoteRequest();
-       m.x   = 0; // canvasW * 0.5;
-       m.y   = Math.floor( Math.random() * (canvasH - 30) + 30 ); // canvasH * 0.5;
+       m.x   = MARGIN_LEFT; // canvasW * 0.5;
+       m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
        m.vX  = Math.random() * (speedX * 0.25) + speedX;
        m.vY  = 0; //Math.sin(i) * Math.random() * 34;
        m.req = robj;
