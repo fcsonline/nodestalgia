@@ -14,7 +14,7 @@ process.argv.forEach(function (val, index, array) {
 
 var filename = new Array();
 if (process.argv.length > 2){
-  for (i=1; i < process.argv.length; i++) {
+  for (i=2; i < process.argv.length; i++) {
      f = process.argv[i];
      if (!path.existsSync(f)){
        throw(f + ' does not exists');
