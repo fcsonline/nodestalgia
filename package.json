@@ -10,7 +10,8 @@
   },
   "dependencies": {
    "express": ">= 2.4.x",
-   "socket.io": ">= 0.8.x" 
+   "socket.io": ">= 0.8.x",
+   "commander": ">= 0.5.x"
   },
   "devDependencies": {},
   "optionalDependencies": {},
