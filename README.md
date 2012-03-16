@@ -7,9 +7,9 @@ Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with No
 ### Requirements
 Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-Modules `express` and `socket.io` installed:
+Modules `express`, `socket.io` and `commander` are required:
 
-    npm install express socket.io
+    npm install express socket.io commander
 
 ### Setup
     git clone git@github.com:fcsonline/nodestalgia.git

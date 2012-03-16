@@ -1,29 +1,37 @@
-var sys = require('util');
-var dns = require('dns');
-var events = require('events');
+#!/usr/bin/env node
 
-var app = require('express').createServer()
-var io = require('socket.io').listen(app);
+var program = require('commander');
 var path = require('path');
 
-/* print process.argv
-process.argv.forEach(function (val, index, array) {
-  console.log(index + ': ' + val);
-});
-*/
+program
+  .version('0.1')
+  .option('-d, --no-dns', 'Do not resolve DNS')
+  .option('-x, --speed-x', 'Set horizontal speed')
+  .option('-y, --speed-y', 'Set vertical speed')
+  .option('-t, --no-time', 'Do not show date and time')
+  .option('-c, --no-colorize', 'Do not colorize the requests')
+  .parse(process.argv);
 
-var filename = new Array();
-if (process.argv.length > 2){
-  for (i=2; i < process.argv.length; i++) {
-     f = process.argv[i];
+var filename = [];
+if (program.args.length > 0){
+  for (i = 0; i < program.args.length; i++) {
+     f = program.args[i];
      if (!path.existsSync(f)){
        throw(f + ' does not exists');
+     } else {
+        filename.push(f);
      }
-    else filename.push(f);
   }
 } else {
   filename.push("/var/log/apache2/access.log");
 }
+
+var sys = require('util');
+var dns = require('dns');
+var events = require('events');
+var app = require('express').createServer()
+var io = require('socket.io').listen(app);
+
 
 app.get('/', function(req, res) {
   res.sendfile(__dirname + '/index.html');
@@ -66,7 +74,9 @@ tail.stdout.on('data', function (data) {
       console.log('Fake ip: ' + robj.ip);
     }
 
-    if (hmdns[robj.ip] !== undefined) {
+    if (!program.dns) {
+      io.sockets.emit('log', JSON.stringify(robj));
+    } else if (hmdns[robj.ip] !== undefined) {
       robj.ip = hmdns[robj.ip];
       io.sockets.emit('log', JSON.stringify(robj));
     } else {
