@@ -17,11 +17,12 @@ Modules `express`, `socket.io` and `commander` are required:
 
 ### Running
 
-    node app.js
+    ./nodestalgia
 or
 
-    node app.js path/to/file
-    node app.js path/to/file1 path/to/file2 *
+    ./nodestalgia path/to/file
+    ./nodestalgia path/to/file1 path/to/file2 *
+    ./nodestalgia [options] path/to/file
 
 By default Nodestalgia follows `/var/log/apache2/access.log`
 
