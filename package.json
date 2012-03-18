@@ -9,9 +9,11 @@
     "url": "git@github.com:fcsonline/nodestalgia.git"
   },
   "dependencies": {
-   "express": ">= 2.4.x",
-   "socket.io": ">= 0.8.x",
-   "commander": ">= 0.5.x"
+      "express": "2.5.8"
+    , "stylus": ">= 0.0.1"
+    , "jade": ">= 0.0.1"
+    , "socket.io": ">= 0.8.x"
+    , "commander": ">= 0.5.x"
   },
   "devDependencies": {},
   "optionalDependencies": {},

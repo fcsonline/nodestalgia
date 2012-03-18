@@ -7,9 +7,9 @@ Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with No
 ### Requirements
 Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-Modules `express`, `socket.io` and `commander` are required:
+Modules required:
 
-    npm install express socket.io commander
+    npm install express socket.io commander stylus jade
 
 ### Setup
     git clone git@github.com:fcsonline/nodestalgia.git
@@ -17,12 +17,12 @@ Modules `express`, `socket.io` and `commander` are required:
 
 ### Running
 
-    ./nodestalgia
+    ./node app.js
 or
 
-    ./nodestalgia path/to/file
-    ./nodestalgia path/to/file1 path/to/file2 *
-    ./nodestalgia [options] path/to/file
+    ./node app.js path/to/file
+    ./node app.js path/to/file1 path/to/file2 *
+    ./node app.js [options] path/to/file
 
 By default Nodestalgia follows `/var/log/apache2/access.log`
 

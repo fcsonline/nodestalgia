@@ -26,27 +26,41 @@ if (program.args.length > 0){
   filename.push("/var/log/apache2/access.log");
 }
 
-var sys = require('util');
-var dns = require('dns');
-var events = require('events');
-var app = require('express').createServer()
-var io = require('socket.io').listen(app);
+var express   = require('express')
+  , routes    = require('./routes')
+  , sys       = require('util')
+  , dns       = require('dns')
+  , events    = require('events')
+  , io        = require('socket.io');
 
+var app = module.exports = express.createServer();
 
-app.get('/', function(req, res) {
-  res.sendfile(__dirname + '/index.html');
+// Configuration
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.set('view options', { layout: false });
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
 });
 
-app.get('/reqscanvas.js', function(req, res) {
-  res.sendfile(__dirname + '/reqscanvas.js');
+app.configure('development', function(){
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.get('/json2.js', function(req, res) {
-  res.sendfile(__dirname + '/json2.js');
+app.configure('production', function(){
+  app.use(express.errorHandler());
 });
 
-console.info('Server running at http://127.0.0.1:8081/ and following "' + filename + '"');
-app.listen('8081');
+// Routes
+app.get('/', routes.index);
+
+app.listen(8081);
+io.listen(app);
+console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 var spawn = require('child_process').spawn;
 var tail = spawn('tail', ['-f'].concat(filename));
