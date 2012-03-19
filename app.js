@@ -31,7 +31,7 @@ var express   = require('express')
   , sys       = require('util')
   , dns       = require('dns')
   , events    = require('events')
-  , io        = require('socket.io');
+  , socketio  = require('socket.io');
 
 var app = module.exports = express.createServer();
 
@@ -59,7 +59,7 @@ app.configure('production', function(){
 app.get('/', routes.index);
 
 app.listen(8081);
-io.listen(app);
+io = socketio.listen(app);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 var spawn = require('child_process').spawn;
