@@ -3,6 +3,14 @@
  * GET home page.
  */
 
-exports.index = function(req, res){
-  res.render('index.jade', { speedx:'10', speedy:'0', colorize: 'false' });
+exports.setup = function(app, program) {
+  app.get('/', function(req, res) {
+    res.render('index.jade', { 
+      speedx: program['speedx'], 
+      speedy: program['speedy'], 
+      colorize: '' + program.colorize, 
+      sumarize: '' + program.sumarize, 
+      time: '' + program.time
+    });
+  });
 };

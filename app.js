@@ -5,11 +5,12 @@ var path = require('path');
 
 program
   .version('0.1')
-  .option('-d, --no-dns', 'Do not resolve DNS')
-  .option('-x, --speed-x', 'Set horizontal speed')
-  .option('-y, --speed-y', 'Set vertical speed')
-  .option('-t, --no-time', 'Do not show date and time')
-  .option('-c, --no-colorize', 'Do not colorize the requests')
+  .option('-D, --no-dns', 'Do not resolve DNS')
+  .option('-x, --speedx <speedx>', 'Set horizontal speed', Number, 10)
+  .option('-y, --speedy <speedy>', 'Set vertical speed', Number, 0)
+  .option('-T, --no-time', 'Do not show date and time')
+  .option('-C, --no-colorize', 'Do not colorize the requests')
+  .option('-S, --no-sumarize', 'Do not show the sumarize counters')
   .parse(process.argv);
 
 var filename = [];
@@ -27,7 +28,6 @@ if (program.args.length > 0){
 }
 
 var express   = require('express')
-  , routes    = require('./routes')
   , sys       = require('util')
   , dns       = require('dns')
   , events    = require('events')
@@ -55,8 +55,14 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// Routes
-app.get('/', routes.index);
+// Routes / Controllers
+[''].map(function(controllerName) { // Examples: ['api', 'authorization', 'users', 'tests']
+    if (controllerName === '') {
+      controllerName = 'index' // Default controller
+    }
+    var controller = require('./routes/' + controllerName);
+    controller.setup(app, program);
+});
 
 app.listen(8081);
 io = socketio.listen(app);

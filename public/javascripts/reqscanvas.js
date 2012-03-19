@@ -28,6 +28,10 @@
  var intervalLoopTime = 30;
 
  var speedX = 0;
+ var speedY = 0;
+ var sumarize = true;
+ var colorize = true;
+ var time = true;
 
  function init(){
    $canvas = $("#mainCanvas");
@@ -36,6 +40,10 @@
    // Load dynamic properties
    intervalLoopTime = $canvas.data("frame-rate");
    speedX           = $canvas.data("speed-x");
+   speedY           = $canvas.data("speed-y");
+   colorize         = $canvas.data("colorize");
+   sumarize         = $canvas.data("sumarize");
+   time             = $canvas.data("time");
 
    if ( canvas.getContext ){
      setup();
@@ -194,24 +202,31 @@
    }
 
    // Type requests and total label
-   var st = '';
+   if (sumarize) {
+     var st = '';
 
-   st += ' HTTP OK: ' + pad(typerequests['200'], 7);
-   st += ' HTTP NOT FOUND: ' + pad(typerequests['404'], 5);
-   st += ' HTTP NOT MODIFIED: ' + pad(typerequests['304'], 5);
-   st += ' TOTAL: ' + pad(total, 8);
+     st += ' HTTP OK: ' + pad(typerequests['200'], 7);
+     st += ' HTTP NOT FOUND: ' + pad(typerequests['404'], 5);
+     st += ' HTTP NOT MODIFIED: ' + pad(typerequests['304'], 5);
+     st += ' TOTAL: ' + pad(total, 8);
 
-   var x = canvasW - 600;
-   var y = canvasH - 5;
-   ctx.font = "10pt Arial";
-   ctx.shadowBlur = 0;
-   ctx.fillStyle = "#ffffff";
-   ctx.fillText(st, x, y);
+     var x = canvasW - 600;
+     var y = canvasH - 5;
+     ctx.font = "10pt Arial";
+     ctx.shadowBlur = 0;
+     ctx.fillStyle = "#ffffff";
+     ctx.fillText(st, x, y);
+   }
 
-   // Date display
-   var date = new Date();
-   ctx.fillText(getDateDisplay(date), 5, 15);
-   ctx.fillText(getTimeDisplay(date), 5, 35);
+   // Date & Time display
+   if (time) {
+     var date = new Date();
+     ctx.font = "10pt Arial";
+     ctx.shadowBlur = 0;
+     ctx.fillStyle = "#ffffff";
+     ctx.fillText(getDateDisplay(date), 5, 15);
+     ctx.fillText(getTimeDisplay(date), 5, 35);
+   }
 
    // Remove obsolete requests & messages
    requests = $.grep(requests, function(n, i){
