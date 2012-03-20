@@ -100,17 +100,17 @@
      var vX = m.vX;
      var vY = m.vY;
 
-     var avgVX = Mabs( vX );
-     var avgVY = Mabs( vY );
-     var avgV  = ( avgVX + avgVY ) * 0.5;
+      // var avgVX = Mabs( vX );
+      // var avgVY = Mabs( vY );
+      // var avgV  = ( avgVX + avgVY ) * 0.5;
 
-     if( avgVX < .1 ) vX *= Mrnd() * 3;
-     if( avgVY < .1 ) vY *= Mrnd() * 3;
+      // if( avgVX < .1 ) vX *= Mrnd() * 3;
+      // if( avgVY < .1 ) vY *= Mrnd() * 3;
 
-     var sc = avgV * 0.45;
-     sc = Math.max( Math.min( sc , 4.5 ) , 0.4 );
+      // var sc = avgV * 0.45;
+      // sc = Math.max( Math.min( sc , 4.5 ) , 0.4 );
 
-     sc = m.size;
+     var sc = m.size;
 
      var nextX = x + vX;
      var nextY = y + vY;
@@ -140,7 +140,12 @@
        ctx.fill();
        ctx.restore();
 
-       // Search a slot
+
+     } else if ( nextX < MARGIN_LEFT ){
+       // Remove the request from the stack
+       orequests.push(i);
+
+       // Search the source slot, for removing
        var slotpos = findSlotByIp(m.req.ip);
 
        slots[slotpos].count--;
@@ -148,9 +153,6 @@
           console.log('Removed obsoleted slot at: ' + slotpos);
           oslots.push(slotpos);
        }
-
-     } else if ( nextX < MARGIN_LEFT ){
-       orequests.push(i);
      }
 
      if ( nextY > canvasH ){
@@ -355,7 +357,7 @@
        m.x   = MARGIN_LEFT; // canvasW * 0.5;
        // m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
        m.vX  = Math.random() * (speedX * 0.25) + speedX;
-       m.vY  = Math.random() * (speedY * 0.25) + speedY;
+       m.vY  = speedY - (Math.random() * speedY * 2);
        m.req = robj;
        requests.push(m);
 
