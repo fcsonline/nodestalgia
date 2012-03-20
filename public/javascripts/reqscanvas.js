@@ -79,9 +79,9 @@
 
  function run(){
    ctx.globalCompositeOperation = "source-over";
-   ctx.fillStyle = "rgba(8,8,12,0.65)";
    ctx.fillStyle = "rgb(0,0,0)";
    ctx.fillRect( 0 , 0 , canvasW , canvasH );
+   ctx.font = "10pt Arial";
    ctx.globalCompositeOperation = "lighter";
 
    var Mrnd = Math.random;
@@ -90,6 +90,7 @@
    // Obsolete arrays
    var orequests = [];
    var omessages = [];
+   var oslots = [];
 
    var i = requests.length;
    while ( i-- ){
@@ -134,12 +135,19 @@
 
        ctx.save();
        ctx.fillStyle = g;
-       //ctx.fillStyle = colorDef(m.color);
-       //ctx.scale(1, 0.75); // Elipse
        ctx.beginPath();
        ctx.arc(nextX, nextY, sc*20, 0, PI_2, false);
        ctx.fill();
        ctx.restore();
+
+       // Search a slot
+       var slotpos = findSlotByIp(m.req.ip);
+
+       slots[slotpos].count--;
+       if (slots[slotpos].count <= 0) {
+          console.log('Removed obsoleted slot at: ' + slotpos);
+          oslots.push(slotpos);
+       }
 
      } else if ( nextX < MARGIN_LEFT ){
        orequests.push(i);
@@ -158,38 +166,42 @@
      m.x  = nextX;
      m.y  = nextY;
 
-     // Reset shadows
-     ctx.shadowBlur = 0;
-
+     ctx.save();
      ctx.fillStyle = colorDef(m.color);
      ctx.beginPath();
      ctx.arc( nextX , nextY , sc , 0 , PI_2 , true );
      ctx.closePath();
      ctx.fill();
-
-
-     ctx.save();
-     ctx.font = "9pt Arial";
-     ctx.shadowColor = "#fff";
-     ctx.shadowOffsetX = 0;
-     ctx.shadowOffsetY = 0;
-     ctx.shadowBlur = 0;
-     ctx.fillStyle = "#ffffff";
-     //ctx.fillText(st, x, y);
-     //ctx.fillStyle = "#fff";
-     ctx.fillText(m.req.ip, 10, y);
      ctx.restore();
    }
 
+   // DNS Source ip label
+   var j = slots.length;
+   ctx.save();
+   ctx.font = "9pt Arial";
+   ctx.shadowColor = "#fff";
+   ctx.shadowOffsetX = 0;
+   ctx.shadowOffsetY = 0;
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = "#ffffff";
+
+   while ( j-- ){
+     var s  = slots[j];
+     ctx.fillText(s.ip, 10, s.y);
+   }
+
+   ctx.restore();
+
    // HTTP Result labels
-   var j = messages.length;
+   var k = messages.length;
+   ctx.save();
    ctx.font = "9pt Arial";
    ctx.shadowColor = "#fff";
    ctx.shadowOffsetX = 0;
    ctx.shadowOffsetY = 0;
 
-   while ( j-- ){
-     var msg  = messages[j];
+   while ( k-- ){
+     var msg  = messages[k];
 
      if (--msg.ttl > 0){
         ctx.fillStyle = colorDef(msg.color, msg.ttl / MAX_MSG_TTL);
@@ -200,6 +212,8 @@
      }
 
    }
+
+   ctx.restore();
 
    // Type requests and total label
    if (sumarize) {
@@ -212,29 +226,43 @@
 
      var x = canvasW - 600;
      var y = canvasH - 5;
+     ctx.save();
      ctx.font = "10pt Arial";
+     ctx.shadowColor = "#fff";
+     ctx.shadowOffsetX = 0;
+     ctx.shadowOffsetY = 0;
      ctx.shadowBlur = 0;
      ctx.fillStyle = "#ffffff";
      ctx.fillText(st, x, y);
+     ctx.restore();
    }
 
    // Date & Time display
    if (time) {
      var date = new Date();
+     ctx.save();
      ctx.font = "10pt Arial";
+     ctx.shadowColor = "#fff";
+     ctx.shadowOffsetX = 0;
+     ctx.shadowOffsetY = 0;
      ctx.shadowBlur = 0;
      ctx.fillStyle = "#ffffff";
      ctx.fillText(getDateDisplay(date), 5, 15);
      ctx.fillText(getTimeDisplay(date), 5, 35);
+     ctx.restore();
    }
 
-   // Remove obsolete requests & messages
+   // Remove obsolete requests & messages & slots
    requests = $.grep(requests, function(n, i){
       return $.inArray(i, orequests);
    });
 
    messages = $.grep(messages, function(n, i){
       return $.inArray(i, omessages);
+   });
+
+   slots = $.grep(slots, function(n, i){
+      return $.inArray(i, oslots);
    });
 
  }
@@ -252,7 +280,7 @@
  function Slot(){
    this.x     = 0;
    this.y     = 0;
-   this.count = 5;
+   this.count = 0;
    this.ip    = '';
  }
 
@@ -327,7 +355,7 @@
        m.x   = MARGIN_LEFT; // canvasW * 0.5;
        // m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
        m.vX  = Math.random() * (speedX * 0.25) + speedX;
-       m.vY  = 0; //Math.sin(i) * Math.random() * 34;
+       m.vY  = Math.random() * (speedY * 0.25) + speedY;
        m.req = robj;
        requests.push(m);
 
