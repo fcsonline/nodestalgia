@@ -366,6 +366,7 @@
          // New slot assignment
           var slot = new Slot();
           slot.ip = robj.ip;
+          slot.count = 1;
           slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
           slots.push(slot);
           console.log('New slot at: ' +slot.y);
