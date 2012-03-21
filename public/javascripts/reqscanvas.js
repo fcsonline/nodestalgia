@@ -356,7 +356,7 @@
 
  function findSlotByTarget (target) {
    for (var j = 0; j < dstslots.length; j++) {
-      if (source === srcslots[j].target) {
+      if (target === dstslots[j].path) {
         return j;
       }
    }
@@ -389,7 +389,7 @@
        m.req = robj;
        requests.push(m);
 
-       // Search a slot
+       // Search a request slot
        var slotpos = findSlotByIp(robj.ip);
 
        if (slotpos < 0) {
@@ -399,13 +399,29 @@
           slot.count = 1;
           slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
           srcslots.push(slot);
-          console.log('New slot at: ' +slot.y);
+          console.log('New request slot at: ' + slot.y);
        } else {
           srcslots[slotpos].count++;
           m.y = srcslots[slotpos].y;
-          console.log('Recicled slot at: ' + srcslots[slotpos].y);
+          console.log('Recycled request slot at: ' + srcslots[slotpos].y);
        }
 
+       // Search a resource slot
+       slotpos = findSlotByTarget(robj.path);
+
+       if (slotpos < 0) {
+         // New slot assignment
+          var slot = new Slot();
+          slot.path = robj.path;
+          slot.count = 1;
+          slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
+          dstslots.push(slot);
+          console.log('New resrouce slot at: ' + slot.y);
+       } else {
+          dstslots[slotpos].count++;
+          //m.y = srcslots[slotpos].y;
+          console.log('Recycled resource slot at: ' + dstslots[slotpos].y);
+       }
      }
 
      ++total;
