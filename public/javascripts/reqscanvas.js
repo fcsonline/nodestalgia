@@ -144,12 +144,12 @@
        ctx.restore();
 
        // Search the source slot, for removing
-       var slotpos = findSlotByTarget(m.req.path);
+       var dstslotpos = findSlotByTarget(m.req.path);
 
-       dstslots[slotpos].count--;
-       if (dstslots[slotpos].count <= 0) {
-          console.log('Removed obsoleted resource slot at: ' + slotpos);
-          odstslots.push(slotpos);
+       dstslots[dstslotpos].count--;
+       if (dstslots[dstslotpos].count <= 0) {
+          console.log('Removed obsoleted resource slot at: ' + dstslotpos);
+          odstslots.push(dstslotpos);
        }
 
      } else if ( nextX < MARGIN_LEFT ){
@@ -157,12 +157,12 @@
        orequests.push(i);
 
        // Search the request slot, for removing
-       var slotpos = findSlotByIp(m.req.ip);
+       var srcslotpos = findSlotByIp(m.req.ip);
 
-       srcslots[slotpos].count--;
-       if (srcslots[slotpos].count <= 0) {
-          console.log('Removed obsoleted request slot at: ' + slotpos);
-          osrcslots.push(slotpos);
+       srcslots[srcslotpos].count--;
+       if (srcslots[srcslotpos].count <= 0) {
+          console.log('Removed obsoleted request slot at: ' + srcslotpos);
+          osrcslots.push(srcslotpos);
        }
      }
 
@@ -383,7 +383,7 @@
      if (intervalId) {
        var m = new RemoteRequest();
        m.x   = MARGIN_LEFT; // canvasW * 0.5;
-       m.vX  = Math.random() * (speed * 0.25) + speed;
+       m.vX  = speed;
        m.req = robj;
        requests.push(m);
 
@@ -400,7 +400,6 @@
           console.log('New request slot at: ' + slot.y);
        } else {
           srcslots[srcslotpos].count++;
-          m.y = srcslots[srcslotpos].y;
           console.log('Recycled request slot at: ' + srcslots[srcslotpos].y);
        }
 
@@ -414,14 +413,16 @@
           slot.count = 1;
           slot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
           dstslotpos = dstslots.push(slot) - 1;
-          console.log('New resrouce slot at: ' + slot.y);
+          console.log('New resource slot at: ' + slot.y);
        } else {
           dstslots[dstslotpos].count++;
           console.log('Recycled resource slot at: ' + dstslots[dstslotpos].y);
        }
 
+       m.y = srcslots[srcslotpos].y;
+
        // When the origin and target slots are set, then the vertical speed can be calculated
-       m.vY = (srcslots[srcslotpos].y - dstslots[dstslotpos].y) * intervalLoopTime / canvasW;
+       m.vY = (srcslots[srcslotpos].y - dstslots[dstslotpos].y) * speed / (canvasW - MARGIN_LEFT);
        console.log('New request with vertical speed at: ' + m.vY);
 
      }
