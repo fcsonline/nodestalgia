@@ -7,6 +7,7 @@
  var PI_2        = Math.PI * 2;
  var MAX_MSG_TTL = 50;
  var MARGIN_LEFT = 150;
+ var DEFAULT_FONT= "10pt Arial";
 
  var canvasW     = 1000;
  var canvasH     = 560;
@@ -81,7 +82,7 @@
    ctx.globalCompositeOperation = "source-over";
    ctx.fillStyle = "rgb(0,0,0)";
    ctx.fillRect( 0 , 0 , canvasW , canvasH );
-   ctx.font = "10pt Arial";
+   ctx.font = DEFAULT_FONT;
    ctx.globalCompositeOperation = "lighter";
 
    var Mrnd = Math.random;
@@ -180,7 +181,7 @@
    // DNS Source ip label
    var j = slots.length;
    ctx.save();
-   ctx.font = "9pt Arial";
+   ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
    ctx.shadowOffsetX = 0;
    ctx.shadowOffsetY = 0;
@@ -197,7 +198,7 @@
    // HTTP Result labels
    var k = messages.length;
    ctx.save();
-   ctx.font = "9pt Arial";
+   ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
    ctx.shadowOffsetX = 0;
    ctx.shadowOffsetY = 0;
@@ -229,7 +230,7 @@
      var x = canvasW - 600;
      var y = canvasH - 5;
      ctx.save();
-     ctx.font = "10pt Arial";
+     ctx.font = DEFAULT_FONT;
      ctx.shadowColor = "#fff";
      ctx.shadowOffsetX = 0;
      ctx.shadowOffsetY = 0;
@@ -243,7 +244,7 @@
    if (time) {
      var date = new Date();
      ctx.save();
-     ctx.font = "10pt Arial";
+     ctx.font = DEFAULT_FONT;
      ctx.shadowColor = "#fff";
      ctx.shadowOffsetX = 0;
      ctx.shadowOffsetY = 0;
