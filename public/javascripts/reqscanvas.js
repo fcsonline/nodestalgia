@@ -7,6 +7,8 @@
  var PI_2        = Math.PI * 2;
  var MAX_MSG_TTL = 50;
  var MARGIN_LEFT = 150;
+ var MARGIN_TOP     = 50;
+ var MARGIN_BOTTOM  = 50;
  var DEFAULT_FONT= "10pt Arial";
 
  var canvasW     = 1000;
@@ -29,8 +31,7 @@
  var intervalId = null;
  var intervalLoopTime = 30;
 
- var speedX = 0;
- var speedY = 0;
+ var speed = 0;
  var sumarize = true;
  var colorize = true;
  var time = true;
@@ -41,8 +42,7 @@
 
    // Load dynamic properties
    intervalLoopTime = $canvas.data("frame-rate");
-   speedX           = $canvas.data("speed-x");
-   speedY           = $canvas.data("speed-y");
+   speed            = $canvas.data("speed");
    colorize         = $canvas.data("colorize");
    sumarize         = $canvas.data("sumarize");
    time             = $canvas.data("time");
@@ -381,48 +381,49 @@
 
      // if not paused, then add it to buffer
      if (intervalId) {
-       var i = requests.length;
        var m = new RemoteRequest();
        m.x   = MARGIN_LEFT; // canvasW * 0.5;
-       // m.y   = Math.floor( Math.random() * (canvasH - 100) + 50 ); // canvasH * 0.5;
-       m.vX  = Math.random() * (speedX * 0.25) + speedX;
-       m.vY  = speedY - (Math.random() * speedY * 2);
+       m.vX  = Math.random() * (speed * 0.25) + speed;
        m.req = robj;
        requests.push(m);
 
        // Search a request slot
-       var slotpos = findSlotByIp(robj.ip);
+       var srcslotpos = findSlotByIp(robj.ip);
 
-       if (slotpos < 0) {
+       if (srcslotpos < 0) {
          // New slot assignment
           var slot = new Slot();
           slot.ip = robj.ip;
           slot.count = 1;
-          slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
-          srcslots.push(slot);
+          slot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
+          srcslotpos = srcslots.push(slot) - 1;
           console.log('New request slot at: ' + slot.y);
        } else {
-          srcslots[slotpos].count++;
-          m.y = srcslots[slotpos].y;
-          console.log('Recycled request slot at: ' + srcslots[slotpos].y);
+          srcslots[srcslotpos].count++;
+          m.y = srcslots[srcslotpos].y;
+          console.log('Recycled request slot at: ' + srcslots[srcslotpos].y);
        }
 
        // Search a resource slot
-       slotpos = findSlotByTarget(robj.path);
+       var dstslotpos = findSlotByTarget(robj.path);
 
-       if (slotpos < 0) {
+       if (dstslotpos < 0) {
          // New slot assignment
           var slot = new Slot();
           slot.path = robj.path;
           slot.count = 1;
-          slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
-          dstslots.push(slot);
+          slot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
+          dstslotpos = dstslots.push(slot) - 1;
           console.log('New resrouce slot at: ' + slot.y);
        } else {
-          dstslots[slotpos].count++;
-          //m.y = srcslots[slotpos].y;
-          console.log('Recycled resource slot at: ' + dstslots[slotpos].y);
+          dstslots[dstslotpos].count++;
+          console.log('Recycled resource slot at: ' + dstslots[dstslotpos].y);
        }
+
+       // When the origin and target slots are set, then the vertical speed can be calculated
+       m.vY = (srcslots[srcslotpos].y - dstslots[dstslotpos].y) * intervalLoopTime / canvasW;
+       console.log('New request with vertical speed at: ' + m.vY);
+
      }
 
      ++total;
@@ -440,11 +441,11 @@ $(document).bind('keypress', function(e){
       intervalId = setInterval( run , intervalLoopTime );
     }
   } else if (unicode == 43){ // + more horizontal speed
-    speedX = Math.min(speedX + 5, 200);
-    console.log ("Speed X set to: " + speedX);
+    speed = Math.min(speed + 5, 200);
+    console.log ("Speed set to: " + speed);
   } else if (unicode == 45){ // - less horizontal speed
-    speedX = Math.max(speedX - 5, 10);
-    console.log ("Speed X set to: " + speedX);
+    speed = Math.max(speed - 5, 10);
+    console.log ("Speed set to: " + speed);
   }
 });
 
