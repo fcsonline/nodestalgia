@@ -6,8 +6,8 @@ var path = require('path');
 program
   .version('0.1')
   .option('-D, --no-dns', 'Do not resolve DNS')
-  .option('-x, --speedx <speedx>', 'Set horizontal speed', Number, 5)
-  .option('-y, --speedy <speedy>', 'Set vertical speed', Number, 2)
+  .option('-x, --speedx <speedx>', 'Set horizontal speed', Number, 6)
+  .option('-y, --speedy <speedy>', 'Set vertical speed', Number, 3)
   .option('-T, --no-time', 'Do not show date and time')
   .option('-C, --no-colorize', 'Do not colorize the requests')
   .option('-S, --no-sumarize', 'Do not show the sumarize counters')
