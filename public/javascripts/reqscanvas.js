@@ -15,7 +15,8 @@
  var requests    = [];
  var typerequests= {};
  var messages    = [];
- var slots       = [];
+ var srcslots    = [];
+ var dstslots    = [];
  var total       = 0;
 
  var canvas;
@@ -66,7 +67,7 @@
    canvas.setAttribute("height", canvasH);
 
    console.log ("Initialized canvas with size: " + canvasW + "x" + canvasH);
-   console.log ("Initialized " + Math.floor(canvasH/20) + " vertical slots");
+   console.log ("Initialized " + Math.floor(canvasH/20) + " request and resource vertical slots");
 
    ctx = canvas.getContext("2d");
  }
@@ -91,7 +92,8 @@
    // Obsolete arrays
    var orequests = [];
    var omessages = [];
-   var oslots = [];
+   var osrcslots = [];
+   var odstslots = [];
 
    var i = requests.length;
    while ( i-- ){
@@ -141,18 +143,26 @@
        ctx.fill();
        ctx.restore();
 
+       // Search the source slot, for removing
+       var slotpos = findSlotByTarget(m.req.path);
+
+       dstslots[slotpos].count--;
+       if (dstslots[slotpos].count <= 0) {
+          console.log('Removed obsoleted resource slot at: ' + slotpos);
+          odstslots.push(slotpos);
+       }
 
      } else if ( nextX < MARGIN_LEFT ){
        // Remove the request from the stack
        orequests.push(i);
 
-       // Search the source slot, for removing
+       // Search the request slot, for removing
        var slotpos = findSlotByIp(m.req.ip);
 
-       slots[slotpos].count--;
-       if (slots[slotpos].count <= 0) {
-          console.log('Removed obsoleted slot at: ' + slotpos);
-          oslots.push(slotpos);
+       srcslots[slotpos].count--;
+       if (srcslots[slotpos].count <= 0) {
+          console.log('Removed obsoleted request slot at: ' + slotpos);
+          osrcslots.push(slotpos);
        }
      }
 
@@ -179,7 +189,7 @@
    }
 
    // DNS Source ip label
-   var j = slots.length;
+   var j = srcslots.length;
    ctx.save();
    ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
@@ -189,7 +199,7 @@
    ctx.fillStyle = "#ffffff";
 
    while ( j-- ){
-     var s  = slots[j];
+     var s  = srcslots[j];
      ctx.fillText(s.ip, 10, s.y);
    }
 
@@ -255,17 +265,24 @@
      ctx.restore();
    }
 
-   // Remove obsolete requests & messages & slots
+   // Remove obsolete requests
    requests = $.grep(requests, function(n, i){
       return $.inArray(i, orequests);
    });
 
+   // Remove obsolete messages
    messages = $.grep(messages, function(n, i){
       return $.inArray(i, omessages);
    });
 
-   slots = $.grep(slots, function(n, i){
-      return $.inArray(i, oslots);
+   // Remove obsolete resources slots
+   dstslots = $.grep(dstslots, function(n, i){
+      return $.inArray(i, odstslots);
+   });
+
+   // Remove obsolete requests slots
+   srcslots = $.grep(srcslots, function(n, i){
+      return $.inArray(i, osrcslots);
    });
 
  }
@@ -284,7 +301,8 @@
    this.x     = 0;
    this.y     = 0;
    this.count = 0;
-   this.ip    = '';
+   this.ip    = ''; // For request slots
+   this.path  = ''; // For resource slots
  }
 
  function colorDef(obj, alpha){
@@ -328,8 +346,18 @@
  }
 
  function findSlotByIp (ip) {
-   for (var j = 0; j < slots.length; j++) {
-      if (ip === slots[j].ip) {
+   for (var j = 0; j < srcslots.length; j++) {
+      if (ip === srcslots[j].ip) {
+        return j;
+      }
+   }
+
+   return -1;
+ }
+
+ function findSlotByTarget (target) {
+   for (var j = 0; j < dstslots.length; j++) {
+      if (target === dstslots[j].path) {
         return j;
       }
    }
@@ -362,7 +390,7 @@
        m.req = robj;
        requests.push(m);
 
-       // Search a slot
+       // Search a request slot
        var slotpos = findSlotByIp(robj.ip);
 
        if (slotpos < 0) {
@@ -371,14 +399,30 @@
           slot.ip = robj.ip;
           slot.count = 1;
           slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
-          slots.push(slot);
-          console.log('New slot at: ' +slot.y);
+          srcslots.push(slot);
+          console.log('New request slot at: ' + slot.y);
        } else {
-          slots[slotpos].count++;
-          m.y = slots[slotpos].y;
-          console.log('Recicled slot at: ' + slots[slotpos].y);
+          srcslots[slotpos].count++;
+          m.y = srcslots[slotpos].y;
+          console.log('Recycled request slot at: ' + srcslots[slotpos].y);
        }
 
+       // Search a resource slot
+       slotpos = findSlotByTarget(robj.path);
+
+       if (slotpos < 0) {
+         // New slot assignment
+          var slot = new Slot();
+          slot.path = robj.path;
+          slot.count = 1;
+          slot.y  = Math.floor( Math.random() * (canvasH - 100) + 50 ); // TODO: Find a correct slot vertical position
+          dstslots.push(slot);
+          console.log('New resrouce slot at: ' + slot.y);
+       } else {
+          dstslots[slotpos].count++;
+          //m.y = srcslots[slotpos].y;
+          console.log('Recycled resource slot at: ' + dstslots[slotpos].y);
+       }
      }
 
      ++total;
