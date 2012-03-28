@@ -130,7 +130,7 @@
        ctx.save();
        ctx.fillStyle = g;
        ctx.beginPath();
-       ctx.arc(nextX, nextY, sc*20, 0, PI_2, false);
+       ctx.arc(nextX, nextY, sc*15, 0, PI_2, false);
        ctx.fill();
        ctx.restore();
 
@@ -196,6 +196,22 @@
 
    ctx.restore();
 
+   // DNS Source ip label
+   var j = srcslots.length;
+   ctx.save();
+   ctx.font = DEFAULT_FONT;
+   ctx.shadowColor = "#fff";
+   ctx.shadowOffsetX = 0;
+   ctx.shadowOffsetY = 0;
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = "#ffffff";
+
+   while ( j-- ){
+     var s  = srcslots[j];
+     ctx.fillText(s.ip, 10, s.y);
+   }
+
+   ctx.restore();
    // HTTP Result labels
    var k = messages.length;
    ctx.save();
