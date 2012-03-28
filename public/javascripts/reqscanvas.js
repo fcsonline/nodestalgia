@@ -196,8 +196,8 @@
 
    ctx.restore();
 
-   // DNS Source ip label
-   var j = srcslots.length;
+   // Target label
+   var k = srcslots.length;
    ctx.save();
    ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
@@ -206,12 +206,13 @@
    ctx.shadowBlur = 0;
    ctx.fillStyle = "#ffffff";
 
-   while ( j-- ){
-     var s  = srcslots[j];
-     ctx.fillText(s.ip, 10, s.y);
+   while ( k-- ){
+     var t = dstslots[k];
+     ctx.fillText(t.path, canvasW - MARGIN_RIGHT + 10, s.y);
    }
 
    ctx.restore();
+
    // HTTP Result labels
    var k = messages.length;
    ctx.save();
