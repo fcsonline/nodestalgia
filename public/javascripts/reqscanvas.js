@@ -19,6 +19,7 @@
  var messages    = [];
  var srcslots    = [];
  var dstslots    = [];
+ var origins     = [];
  var total       = 0;
 
  var canvas;
@@ -288,7 +289,7 @@
  }
 
  function RemoteRequest(){
-   this.color = {r: Math.floor( Math.random()*155 + 100 ), g: Math.floor( Math.random()*155 + 100 ), b: Math.floor( Math.random()*155 + 100 )};
+   this.color = ''; // Defined by origin color o random for only one origin
    this.x     = 0;
    this.y     = 0;
    this.vX    = 0;
@@ -303,6 +304,11 @@
    this.count = 0;
    this.ip    = ''; // For request slots
    this.path  = ''; // For resource slots
+ }
+
+ function Origin(){
+   this.color = '';
+   this.path  = '';
  }
 
  function colorDef(obj, alpha){
@@ -365,6 +371,16 @@
    return -1;
  }
 
+ function findOriginByName (filename) {
+   for (var j = 0; j < origins.length; j++) {
+      if (filename === origins[j].path) {
+        return j;
+      }
+   }
+
+   return -1;
+ }
+
  window.onload = init;
 
  // Establish the websocket connection
@@ -386,6 +402,25 @@
        m.vX  = speed;
        m.req = robj;
        requests.push(m);
+
+       if (robj.origin !== undefined) {
+         // Find pre generated origin, for inherit color
+         var originpos = findOriginByName(robj.origin);
+
+         if (originpos < 0) {
+           // New origin assignment
+           var origin = new Origin();
+           origin.path = robj.origin;
+           origin.color = {r: Math.floor( Math.random()*155 + 100 ), g: Math.floor( Math.random()*155 + 100 ), b: Math.floor( Math.random()*155 + 100 )};
+           originpos = origins.push(origin) - 1;
+           console.log('New origin: ' + robj.origin);
+         }
+
+         m.color = origins[originpos].color;
+       } else {
+         // For no origin request, only one origin, then random color
+         m.color = {r: Math.floor( Math.random()*155 + 100 ), g: Math.floor( Math.random()*155 + 100 ), b: Math.floor( Math.random()*155 + 100 )};
+       }
 
        // Search a request slot
        var srcslotpos = findSlotByIp(robj.ip);
