@@ -137,10 +137,12 @@
        // Search the source slot, for removing
        var dstslotpos = findSlotByTarget(m.req.path);
 
-       dstslots[dstslotpos].count--;
-       if (dstslots[dstslotpos].count <= 0) {
-          console.log('Removed obsoleted resource slot at: ' + dstslotpos);
-          odstslots.push(dstslotpos);
+       if (dstslotpos >= 0) {
+         dstslots[dstslotpos].count--;
+         if (dstslots[dstslotpos].count == 0) {
+            console.log('Removed obsoleted resource slot at: ' + dstslotpos);
+            odstslots.push(dstslotpos);
+         }
        }
 
      } else if ( nextX < MARGIN_LEFT ){
@@ -150,10 +152,12 @@
        // Search the request slot, for removing
        var srcslotpos = findSlotByIp(m.req.ip);
 
-       srcslots[srcslotpos].count--;
-       if (srcslots[srcslotpos].count <= 0) {
-          console.log('Removed obsoleted request slot at: ' + srcslotpos);
-          osrcslots.push(srcslotpos);
+       if (srcslotpos >= 0) {
+         srcslots[srcslotpos].count--;
+         if (srcslots[srcslotpos].count == 0) {
+            console.log('Removed obsoleted request slot at: ' + srcslotpos);
+            osrcslots.push(srcslotpos);
+         }
        }
      }
 
@@ -197,7 +201,7 @@
    ctx.restore();
 
    // Target label
-   var k = srcslots.length;
+   var k = dstslots.length;
    ctx.save();
    ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
@@ -208,28 +212,28 @@
 
    while ( k-- ){
      var t = dstslots[k];
-     ctx.fillText(t.path, canvasW - MARGIN_RIGHT + 10, s.y);
+     ctx.fillText(t.path, canvasW - MARGIN_RIGHT + 10, t.y);
    }
 
    ctx.restore();
 
    // HTTP Result labels
-   var k = messages.length;
+   var n = messages.length;
    ctx.save();
    ctx.font = DEFAULT_FONT;
    ctx.shadowColor = "#fff";
    ctx.shadowOffsetX = 0;
    ctx.shadowOffsetY = 0;
 
-   while ( k-- ){
-     var msg  = messages[k];
+   while ( n-- ){
+     var msg  = messages[n];
 
      if (--msg.ttl > 0){
         ctx.fillStyle = colorDef(msg.color, msg.ttl / MAX_MSG_TTL);
         ctx.shadowBlur = msg.ttl / 5;
         ctx.fillText(msg.text, msg.x, msg.y);
      } else {
-       omessages.push(j);
+       omessages.push(n);
      }
 
    }
@@ -275,22 +279,22 @@
 
    // Remove obsolete requests
    requests = $.grep(requests, function(n, i){
-      return $.inArray(i, orequests);
+      return $.inArray(i, orequests) < 0;
    });
 
    // Remove obsolete messages
    messages = $.grep(messages, function(n, i){
-      return $.inArray(i, omessages);
+      return $.inArray(i, omessages) < 0;
    });
 
    // Remove obsolete resources slots
    dstslots = $.grep(dstslots, function(n, i){
-      return $.inArray(i, odstslots);
+      return $.inArray(i, odstslots) < 0;
    });
 
    // Remove obsolete requests slots
    srcslots = $.grep(srcslots, function(n, i){
-      return $.inArray(i, osrcslots);
+      return $.inArray(i, osrcslots) < 0;
    });
 
  }
@@ -464,7 +468,7 @@
        m.y = srcslots[srcslotpos].y;
 
        // When the origin and target slots are set, then the vertical speed can be calculated
-       m.vY = (srcslots[srcslotpos].y - dstslots[dstslotpos].y) * speed / (canvasW - MARGIN_LEFT);
+       m.vY = (dstslots[dstslotpos].y - srcslots[srcslotpos].y) / (canvasW - MARGIN_LEFT - MARGIN_RIGHT) * speed;
        console.log('New request with vertical speed at: ' + m.vY);
 
      }
