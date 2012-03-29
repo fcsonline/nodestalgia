@@ -6,7 +6,7 @@ var path = require('path');
 program
   .version('0.1')
   .option('-D, --no-dns', 'Do not resolve DNS')
-  .option('-e, --speed <speed>', 'Set the request movement speed', Number, 5)
+  .option('-e, --speed <speed>', 'Set the request movement speed', Number, 15)
   .option('-f, --framerate <framerate>', 'Set the rendering canvas frame rate', Number, 30)
   .option('-T, --no-time', 'Do not show date and time')
   .option('-C, --no-colorize', 'Do not colorize the requests')

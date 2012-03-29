@@ -10,7 +10,9 @@
  var MARGIN_RIGHT = 150;
  var MARGIN_TOP     = 50;
  var MARGIN_BOTTOM  = 50;
+ var BULLET_SIZE = 4;
  var DEFAULT_FONT= "10pt Arial";
+ var PONG_HEIGHT = 50;
 
  var canvasW     = 1000;
  var canvasH     = 560;
@@ -22,6 +24,7 @@
  var dstslots    = [];
  var origins     = [];
  var total       = 0;
+ var pongy       = 0;
 
  var canvas;
  var ctx;
@@ -68,6 +71,8 @@
    canvas.setAttribute("width", canvasW);
    canvas.setAttribute("height", canvasH);
 
+   pongy = canvasH / 2 - PONG_HEIGHT / 2;
+
    console.log ("Initialized canvas with size: " + canvasW + "x" + canvasH);
    console.log ("Initialized " + Math.floor(canvasH/20) + " request and resource vertical slots");
 
@@ -104,7 +109,6 @@
      var y  = m.y;
      var vX = m.vX;
      var vY = m.vY;
-     var sc = m.size;
 
      var nextX = x + vX;
      var nextY = y + vY;
@@ -112,6 +116,9 @@
      if ( nextX > canvasW - MARGIN_RIGHT ){
        nextX = canvasW - MARGIN_RIGHT;
        vX *= -1;
+
+       // Establish the repplied attribute for pong
+       m.repplied = true;
 
        // Push a new message
        var msg = new Message();
@@ -122,7 +129,7 @@
        msg.ttl = MAX_MSG_TTL; // Aprox: 1.5s
        messages.push(msg);
 
-       var g = ctx.createRadialGradient(nextX,nextY,m.size,nextX,nextY,m.size*20);
+       var g = ctx.createRadialGradient(nextX,nextY,BULLET_SIZE,nextX,nextY,BULLET_SIZE*20);
        g.addColorStop(0,"rgba(" + m.color.r + "," + m.color.g + "," + m.color.b + "," + 1 +")");
        g.addColorStop(0.2,"rgba(" + m.color.r + "," + m.color.g + "," + m.color.b + ", 0.4)");
        g.addColorStop(1.0,"rgba(255,255,255,0)");
@@ -130,7 +137,7 @@
        ctx.save();
        ctx.fillStyle = g;
        ctx.beginPath();
-       ctx.arc(nextX, nextY, sc*15, 0, PI_2, false);
+       ctx.arc(nextX, nextY, BULLET_SIZE, 0, PI_2, false);
        ctx.fill();
        ctx.restore();
 
@@ -177,7 +184,7 @@
      ctx.save();
      ctx.fillStyle = colorDef(m.color);
      ctx.beginPath();
-     ctx.arc( nextX , nextY , sc , 0 , PI_2 , true );
+     ctx.arc( nextX , nextY , BULLET_SIZE , 0 , PI_2 , true );
      ctx.closePath();
      ctx.fill();
      ctx.restore();
@@ -238,6 +245,18 @@
 
    }
 
+   ctx.restore();
+
+   // Next Pong position
+   var nrpos = findNextNonReppliedRequest();
+   if (nrpos >= 0) {
+    pongy = Math.max(requests[nrpos].y - PONG_HEIGHT / 2, 0);
+   }
+
+   // Display pong
+   ctx.save();
+   ctx.fillStyle = "rgb(150,29,28)";
+   ctx.fillRect (canvasW - MARGIN_RIGHT, pongy,10, PONG_HEIGHT);
    ctx.restore();
 
    // Type requests and total label
@@ -305,8 +324,8 @@
    this.y     = 0;
    this.vX    = 0;
    this.vY    = 0;
-   this.size  = 5;
    this.req   = null; // Filled by websocket
+   this.repplied = false; // For pong targets
  }
 
  function Slot(){
@@ -360,6 +379,16 @@
    return (date.getHours() < 10 ? '0' : '') + date.getHours() + ':' +
             (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ':' +
             (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+ }
+
+ function findNextNonReppliedRequest() {
+   for (var j = 0; j < requests.length; j++) {
+      if (!requests[j].repplied) {
+        return j;
+      }
+   }
+
+   return -1;
  }
 
  function findSlotByIp (ip) {
