@@ -72,10 +72,10 @@ var spawn = require('child_process').spawn;
 var tail = spawn('tail', ['-f'].concat(filename));
 
 // 127.0.0.1 - - [07/Mar/2012:23:21:47 +0100] "GET / HTTP/1.0" 200 454 "-" "ApacheBench/2.3"
-var regexp = /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+\[(.+)\] "(\w+) ([^ ]+) .*" (\w+) (\w+)/g;
+var regexp = /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+\[(.+)\] "(\w+) ([^ ]+) .*" (\w+) (\w+)/;
 
 // Regex for fake dns
-var regexpdns = /.*fakedns=(.*)/g;
+var regexpdns = /\?(fakedns=([0-9\.]+))/;
 
 // Hashmap for DNS resolves
 var hmdns = {};
@@ -90,7 +90,8 @@ tail.stdout.on('data', function (data) {
     // Test for matching a GET parameter for DNS faking
     var matchdns = regexpdns.exec(robj.path);
     if (matchdns !== null) {
-      robj.ip = matchdns[1];
+      robj.ip = matchdns[2];
+      robj.path = match[4].replace(regexpdns,''); // Hide fakedns
       console.log('Fake ip: ' + robj.ip);
     }
 
