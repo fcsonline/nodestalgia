@@ -75,7 +75,7 @@ var tail = spawn('tail', ['-f'].concat(filename));
 var regexp = /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+\[(.+)\] "(\w+) ([^ ]+) .*" (\w+) (\w+)/;
 
 // Regex for fake dns
-var regexpdns = /\?(fakedns=([0-9\.]+))/;
+var regexpdns = /(fakedns=([0-9\.]+))/;
 
 // Hashmap for DNS resolves
 var hmdns = {};
