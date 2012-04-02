@@ -542,9 +542,20 @@ function bulletInfoPopup(e){
        run(true);
 
        // Display popup rectangle
+       var r = requests[bulletpopup];
+       var rx = r.x + 20;
+       var ry = r.y + 20;
+
        ctx.save();
-       ctx.fillStyle = "rgb(150,29,28)";
-       ctx.fillRect (requests[bulletpopup].x, requests[bulletpopup].y,100, 50);
+       ctx.fillStyle = colorDef(r.color);
+       ctx.fillRect (rx, ry, 220, 95);
+       ctx.font = DEFAULT_FONT;
+       ctx.fillStyle = "#ffffff";
+       ctx.fillText(r.req.method + ' ' + r.req.path, rx + 10, ry + 20);
+       ctx.fillText("From: " + r.req.ip, rx + 10, ry + 35);
+       ctx.fillText("Result: " + r.req.result, rx + 10, ry + 50);
+       ctx.fillText("Size: " + r.req.size, rx + 10, ry + 65);
+       ctx.fillText("Time: " + r.req.time, rx + 10, ry + 80);
        ctx.restore();
 
        $canvas.css('cursor', 'pointer');
