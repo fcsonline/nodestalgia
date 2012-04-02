@@ -30,7 +30,6 @@
 
  var canvas;
  var ctx;
- var canvasDiv;
 
  var longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
  var longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -65,10 +64,10 @@
  }
 
  function setup(){
-   canvasDiv = $("#canvasContainer")[0];
+   var canvasDiv = $("#canvasContainer");
 
-   canvasW = canvasDiv.offsetWidth;
-   canvasH = canvasDiv.offsetHeight;
+   canvasW = canvasDiv.outerWidth();
+   canvasH = canvasDiv.outerHeight();
 
    canvas.setAttribute("width", canvasW);
    canvas.setAttribute("height", canvasH);
