@@ -27,6 +27,7 @@
  var total       = 0;
  var pongy       = 0;
  var bulletpopup = -1;
+ var pauseinfo   = {};
 
  var canvas;
  var ctx;
@@ -88,6 +89,15 @@
  }
 
  function run(readonly){
+
+   if (readonly === undefined || readonly === false) {
+     // For paused information
+     pauseinfo ['200'] = typerequests['200'];
+     pauseinfo ['304'] = typerequests['304'];
+     pauseinfo ['404'] = typerequests['404'];
+     pauseinfo ['date'] = new Date();
+   }
+
    ctx.globalCompositeOperation = "source-over";
    ctx.fillStyle = "rgb(0,0,0)";
    ctx.fillRect( 0 , 0 , canvasW , canvasH );
@@ -266,9 +276,9 @@
    if (sumarize) {
      var st = '';
 
-     st += ' HTTP OK: ' + pad(typerequests['200'], 7);
-     st += ' HTTP NOT FOUND: ' + pad(typerequests['404'], 5);
-     st += ' HTTP NOT MODIFIED: ' + pad(typerequests['304'], 5);
+     st += ' HTTP OK: ' + pad(pauseinfo['200'], 7);
+     st += ' HTTP NOT FOUND: ' + pad(pauseinfo['404'], 5);
+     st += ' HTTP NOT MODIFIED: ' + pad(pauseinfo['304'], 5);
      st += ' TOTAL: ' + pad(total, 8);
 
      var x = canvasW - 600;
@@ -286,7 +296,7 @@
 
    // Date & Time display
    if (time) {
-     var date = new Date();
+     var date = pauseinfo['date'];
      ctx.save();
      ctx.font = DEFAULT_FONT;
      ctx.shadowColor = "#fff";
