@@ -10,6 +10,7 @@
  var MARGIN_RIGHT = 150;
  var MARGIN_TOP     = 50;
  var MARGIN_BOTTOM  = 50;
+ var BULLET_POPUP_DIST = 20;
  var BULLET_SIZE = 4;
  var DEFAULT_FONT= "10pt Arial";
  var PONG_HEIGHT = 50;
@@ -25,6 +26,7 @@
  var origins     = [];
  var total       = 0;
  var pongy       = 0;
+ var bulletpopup = -1;
 
  var canvas;
  var ctx;
@@ -86,7 +88,7 @@
    typerequests['304'] = 0;
  }
 
- function run(){
+ function run(readonly){
    ctx.globalCompositeOperation = "source-over";
    ctx.fillStyle = "rgb(0,0,0)";
    ctx.fillRect( 0 , 0 , canvasW , canvasH );
@@ -176,10 +178,12 @@
        vY *= -1;
      }
 
-     m.vX = vX;
-     m.vY = vY;
-     m.x  = nextX;
-     m.y  = nextY;
+     if (readonly === undefined || readonly === false) {
+       m.vX = vX;
+       m.vY = vY;
+       m.x  = nextX;
+       m.y  = nextY;
+     }
 
      ctx.save();
      ctx.fillStyle = colorDef(m.color);
@@ -505,6 +509,51 @@
      ++total;
  });
 
+function bulletInfoPopup(e){
+  var minpos = undefined;
+  var mindist = undefined;
+
+   for (var j = 0; j < requests.length; j++) {
+      var r = requests[j];
+      var dist = Math.sqrt(Math.pow(e.pageX-r.x, 2) + Math.pow(e.pageY-r.y, 2));
+
+      if (mindist === undefined || dist < mindist) {
+        minpos = j;
+        mindist = dist;
+      }
+   }
+
+   if (mindist < BULLET_POPUP_DIST) {
+     if (minpos !== bulletpopup || bulletpopup < 0) {
+       console.log('Showing popup of request: ' + minpos);
+       console.log(requests[minpos]);
+       bulletpopup = minpos;
+
+       // Refresh canvas
+       run(true);
+
+       // Display popup rectangle
+       ctx.save();
+       ctx.fillStyle = "rgb(150,29,28)";
+       ctx.fillRect (requests[bulletpopup].x, requests[bulletpopup].y,100, 50);
+       ctx.restore();
+
+       $canvas.css('cursor', 'pointer');
+     }
+   } else {
+     if (bulletpopup >= 0) {
+       console.log('Hidding popup');
+       bulletpopup = -1;
+
+       // Refresh canvas
+       run(true);
+
+       $canvas.css('cursor', 'default');
+     }
+   }
+
+}
+
 // Pause
 $(document).bind('keypress', function(e){
   var unicode=e.keyCode? e.keyCode : e.charCode;
@@ -513,7 +562,15 @@ $(document).bind('keypress', function(e){
     if (intervalId) {
       clearInterval(intervalId);
       intervalId = null;
+
+      // Refresh canvas
+      run(true);
+
+      // Bind the mousemove event
+      $canvas.bind('mousemove', bulletInfoPopup);
     } else {
+      // Unbind the mousemove event
+      $canvas.unbind('mousemove', bulletInfoPopup);
       intervalId = setInterval( run , intervalLoopTime );
     }
   } else if (unicode == 43){ // + more horizontal speed
