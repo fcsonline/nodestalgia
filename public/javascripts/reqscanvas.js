@@ -213,9 +213,20 @@
    ctx.shadowBlur = 0;
    ctx.fillStyle = "#ffffff";
 
+   function fitText(text, maxwidth){
+
+      while (ctx.measureText(text).width > maxwidth){
+        text = text.substring(0,text.length - 1);
+      }
+
+      return text;
+   }
+
    while ( j-- ){
      var s  = srcslots[j];
-     ctx.fillText(s.ip, 10, s.y);
+
+
+     ctx.fillText(fitText(s.ip, MARGIN_LEFT), 10, s.y);
    }
 
    ctx.restore();
