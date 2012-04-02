@@ -34,5 +34,5 @@ Access:
 * `+` increase the request speed
 * `-` decrease the request speed
 
-![](http://fcsonline.github.com/nodestalgia/img/screenshot1.png)
+![](http://fcsonline.github.com/nodestalgia/img/screenshot2.png)
 
