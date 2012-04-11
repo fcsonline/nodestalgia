@@ -21,7 +21,10 @@ or
     ./node app.js path/to/file1 path/to/file2 *
     ./node app.js [options] path/to/file
 
-By default Nodestalgia follows `/var/log/apache2/access.log`
+By default Nodestalgia follows `/var/log/apache2/access.log`, but also works with:
+* Apache default access log
+* Nginx default access log
+* Node.js and Express.js with default [Connect logger profile](http://www.senchalabs.org/connect/logger.html)
 
 Access:
     http://remote_host:8081
