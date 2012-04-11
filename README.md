@@ -22,6 +22,7 @@ or
     ./node app.js [options] path/to/file
 
 By default Nodestalgia follows `/var/log/apache2/access.log`, but also works with:
+
 * Apache default access log
 * Nginx default access log
 * Node.js and Express.js with default [Connect logger profile](http://www.senchalabs.org/connect/logger.html)
