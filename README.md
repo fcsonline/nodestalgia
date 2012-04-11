@@ -7,13 +7,10 @@ Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with No
 ### Requirements
 Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-Modules required:
-
-    npm install express socket.io commander stylus jade
-
 ### Setup
     git clone git@github.com:fcsonline/nodestalgia.git
     cd nodestalgia
+    npm install -d
 
 ### Running
 
@@ -34,5 +31,5 @@ Access:
 * `+` increase the request speed
 * `-` decrease the request speed
 
-![](http://fcsonline.github.com/nodestalgia/img/screenshot2.png)
+![](http://fcsonline.github.com/nodestalgia/images/screenshot2.png)
 
