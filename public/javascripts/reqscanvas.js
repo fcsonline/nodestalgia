@@ -95,7 +95,7 @@
      pauseinfo ['200'] = typerequests['200'];
      pauseinfo ['304'] = typerequests['304'];
      pauseinfo ['404'] = typerequests['404'];
-     pauseinfo ['date'] = new Date();
+     pauseinfo.date = new Date();
    }
 
    ctx.globalCompositeOperation = "source-over";
@@ -157,7 +157,7 @@
 
        if (dstslotpos >= 0) {
          dstslots[dstslotpos].count--;
-         if (dstslots[dstslotpos].count == 0) {
+         if (dstslots[dstslotpos].count === 0) {
             console.log('Removed obsoleted resource slot at: ' + dstslotpos);
             odstslots.push(dstslotpos);
          }
@@ -172,7 +172,7 @@
 
        if (srcslotpos >= 0) {
          srcslots[srcslotpos].count--;
-         if (srcslots[srcslotpos].count == 0) {
+         if (srcslots[srcslotpos].count === 0) {
             console.log('Removed obsoleted request slot at: ' + srcslotpos);
             osrcslots.push(srcslotpos);
          }
@@ -257,12 +257,12 @@
    ctx.shadowOffsetY = 0;
 
    while ( n-- ){
-     var msg  = messages[n];
+     var title = messages[n];
 
-     if (--msg.ttl > 0){
-        ctx.fillStyle = colorDef(msg.color, msg.ttl / MAX_MSG_TTL);
-        ctx.shadowBlur = msg.ttl / 5;
-        ctx.fillText(msg.text, msg.x, msg.y);
+     if (--title.ttl > 0){
+        ctx.fillStyle = colorDef(title.color, title.ttl / MAX_MSG_TTL);
+        ctx.shadowBlur = title.ttl / 5;
+        ctx.fillText(title.text, title.x, title.y);
      } else {
        omessages.push(n);
      }
@@ -292,8 +292,8 @@
      st += ' HTTP NOT MODIFIED: ' + pad(pauseinfo['304'], 5);
      st += ' TOTAL: ' + pad(total, 8);
 
-     var x = canvasW - 600;
-     var y = canvasH - 5;
+     var tx = canvasW - 600;
+     var ty = canvasH - 5;
      ctx.save();
      ctx.font = DEFAULT_FONT;
      ctx.shadowColor = "#fff";
@@ -301,13 +301,13 @@
      ctx.shadowOffsetY = 0;
      ctx.shadowBlur = 0;
      ctx.fillStyle = "#ffffff";
-     ctx.fillText(st, x, y);
+     ctx.fillText(st, tx, ty);
      ctx.restore();
    }
 
    // Date & Time display
    if (time) {
-     var date = pauseinfo['date'];
+     var date = pauseinfo.date;
      ctx.save();
      ctx.font = DEFAULT_FONT;
      ctx.shadowColor = "#fff";
@@ -406,7 +406,8 @@
  }
 
  function findNextNonReppliedRequest() {
-   for (var j = 0; j < requests.length; j++) {
+   var j;
+   for (j = 0; j < requests.length; j++) {
       if (!requests[j].repplied) {
         return j;
       }
@@ -416,7 +417,8 @@
  }
 
  function findSlotByIp (ip) {
-   for (var j = 0; j < srcslots.length; j++) {
+   var j;
+   for (j = 0; j < srcslots.length; j++) {
       if (ip === srcslots[j].ip) {
         return j;
       }
@@ -426,7 +428,8 @@
  }
 
  function findSlotByTarget (target) {
-   for (var j = 0; j < dstslots.length; j++) {
+   var j;
+   for (j = 0; j < dstslots.length; j++) {
       if (target === dstslots[j].path) {
         return j;
       }
@@ -436,7 +439,8 @@
  }
 
  function findOriginByName (filename) {
-   for (var j = 0; j < origins.length; j++) {
+   var j;
+   for (j = 0; j < origins.length; j++) {
       if (filename === origins[j].path) {
         return j;
       }
@@ -491,12 +495,12 @@
 
        if (srcslotpos < 0) {
          // New slot assignment
-          var slot = new Slot();
-          slot.ip = robj.ip;
-          slot.count = 1;
-          slot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
-          srcslotpos = srcslots.push(slot) - 1;
-          console.log('New request slot at: ' + slot.y);
+          var sslot = new Slot();
+          sslot.ip = robj.ip;
+          sslot.count = 1;
+          sslot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
+          srcslotpos = srcslots.push(sslot) - 1;
+          console.log('New request sslot at: ' + sslot.y);
        } else {
           srcslots[srcslotpos].count++;
           console.log('Recycled request slot at: ' + srcslots[srcslotpos].y);
@@ -507,12 +511,12 @@
 
        if (dstslotpos < 0) {
          // New slot assignment
-          var slot = new Slot();
-          slot.path = robj.path;
-          slot.count = 1;
-          slot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
-          dstslotpos = dstslots.push(slot) - 1;
-          console.log('New resource slot at: ' + slot.y);
+          var dslot = new Slot();
+          dslot.path = robj.path;
+          dslot.count = 1;
+          dslot.y  = Math.floor( Math.random() * (canvasH - MARGIN_TOP - MARGIN_BOTTOM) + MARGIN_TOP ); // TODO: Find a correct slot vertical position
+          dstslotpos = dstslots.push(dslot) - 1;
+          console.log('New resource dslot at: ' + dslot.y);
        } else {
           dstslots[dstslotpos].count++;
           console.log('Recycled resource slot at: ' + dstslots[dstslotpos].y);
@@ -530,12 +534,13 @@
  });
 
 function bulletInfoPopup(e){
-  var minpos = undefined;
-  var mindist = undefined;
+  var minpos;
+  var mindist;
+  var j;
 
-   for (var j = 0; j < requests.length; j++) {
-      var r = requests[j];
-      var dist = Math.sqrt(Math.pow(e.pageX-r.x, 2) + Math.pow(e.pageY-r.y, 2));
+   for (j = 0; j < requests.length; j++) {
+      var tr = requests[j];
+      var dist = Math.sqrt(Math.pow(e.pageX-tr.x, 2) + Math.pow(e.pageY-tr.y, 2));
 
       if (mindist === undefined || dist < mindist) {
         minpos = j;
