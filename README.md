@@ -7,13 +7,10 @@ Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with No
 ### Requirements
 Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-Modules required:
-
-    npm install express socket.io commander stylus jade
-
 ### Setup
     git clone git@github.com:fcsonline/nodestalgia.git
     cd nodestalgia
+    npm install -d
 
 ### Running
 
@@ -24,7 +21,11 @@ or
     ./node app.js path/to/file1 path/to/file2 *
     ./node app.js [options] path/to/file
 
-By default Nodestalgia follows `/var/log/apache2/access.log`
+By default Nodestalgia follows `/var/log/apache2/access.log`, but also works with:
+
+* Apache default access log
+* Nginx default access log
+* Node.js and Express.js with default [Connect logger profile](http://www.senchalabs.org/connect/logger.html)
 
 Access:
     http://remote_host:8081
@@ -34,5 +35,5 @@ Access:
 * `+` increase the request speed
 * `-` decrease the request speed
 
-![](http://fcsonline.github.com/nodestalgia/img/screenshot2.png)
+![](http://fcsonline.github.com/nodestalgia/images/screenshot2.png)
 
