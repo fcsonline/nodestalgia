@@ -2,34 +2,34 @@ var program = require('commander');
 var path = require('path');
 
 program
-  .version('0.1')
-  .option('-D, --no-dns', 'Do not resolve DNS')
-  .option('-e, --speed <speed>', 'Set the request movement speed', Number, 15)
-  .option('-f, --framerate <framerate>', 'Set the rendering canvas frame rate', Number, 30)
-  .option('-T, --no-time', 'Do not show date and time')
-  .option('-C, --no-colorize', 'Do not colorize the requests')
-  .option('-S, --no-sumarize', 'Do not show the sumarize counters')
-  .parse(process.argv);
+.version('0.1')
+.option('-D, --no-dns', 'Do not resolve DNS')
+.option('-e, --speed <speed>', 'Set the request movement speed', Number, 15)
+.option('-f, --framerate <framerate>', 'Set the rendering canvas frame rate', Number, 30)
+.option('-T, --no-time', 'Do not show date and time')
+.option('-C, --no-colorize', 'Do not colorize the requests')
+.option('-S, --no-sumarize', 'Do not show the sumarize counters')
+.parse(process.argv);
 
 var filename = [];
 if (program.args.length  > 0){
   for (i = 0; i < program.args.length; i++) {
-     f = program.args[i];
-     if (!path.existsSync(f)){
-       throw(f + ' does not exists');
-     } else {
-        filename.push(f);
-     }
+    f = program.args[i];
+    if (!path.existsSync(f)){
+      throw(f + ' does not exists');
+    } else {
+      filename.push(f);
+    }
   }
 } else {
   filename.push("/var/log/apache2/access.log");
 }
 
 var express   = require('express'),
-    sys       = require('util'),
-    dns       = require('dns'),
-    events    = require('events'),
-    socketio  = require('socket.io');
+sys       = require('util'),
+dns       = require('dns'),
+events    = require('events'),
+socketio  = require('socket.io');
 
 var app = module.exports = express.createServer();
 
@@ -55,11 +55,11 @@ app.configure('production', function(){
 
 // Routes / Controllers
 [''].map(function(controllerName) { // Examples: ['api', 'authorization', 'users', 'tests']
-    if (controllerName === '') {
-      controllerName = 'index'; // Default controller
-    }
-    var controller = require('./routes/' + controllerName);
-    controller.setup(app, program);
+  if (controllerName === '') {
+    controllerName = 'index'; // Default controller
+  }
+  var controller = require('./routes/' + controllerName);
+  controller.setup(app, program);
 });
 
 app.listen(8081);
@@ -80,19 +80,19 @@ var hmdns = {};
 
 // For DNS resolve
 function reverse_addr(addr) {
-    var e = new events.EventEmitter();
-    dns.reverse(addr, function(err, domains) {
-        if (err) {
-            if (err.errno == dns.NOTFOUND){
-                e.emit('response', addr, 'NOTFOUND');
-            }else{
-                e.emit('error', addr, err);
-            }
-        } else{
-            e.emit('response', addr, domains);
-        }
-    });
-    return e;
+  var e = new events.EventEmitter();
+  dns.reverse(addr, function(err, domains) {
+    if (err) {
+      if (err.errno == dns.NOTFOUND){
+        e.emit('response', addr, 'NOTFOUND');
+      }else{
+        e.emit('error', addr, err);
+      }
+    } else{
+      e.emit('response', addr, domains);
+    }
+  });
+  return e;
 }
 
 tail.stdout.on('data', function (data) {
