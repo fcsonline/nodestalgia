@@ -7,19 +7,18 @@ Nodestalgia is a [Logstalgia](http://code.google.com/p/logstalgia/) port with No
 ### Requirements
 Nodejs and npm installed, refer to `https://github.com/joyent/node/wiki/Installation`
 
-### Setup
-    git clone git@github.com:fcsonline/nodestalgia.git
-    cd nodestalgia
-    npm install -d
+## Installation
+
+    $ npm install nodestalgia -g
 
 ### Running
 
-    ./node app.js
+    $ nodestalgia
 or
 
-    ./node app.js path/to/file
-    ./node app.js path/to/file1 path/to/file2 *
-    ./node app.js [options] path/to/file
+    $ nodestalgia path/to/file
+    $ nodestalgia path/to/file1 path/to/file2 *
+    $ nodestalgia [options] path/to/file
 
 By default Nodestalgia follows `/var/log/apache2/access.log`, but also works with:
 
