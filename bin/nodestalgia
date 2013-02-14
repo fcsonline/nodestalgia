@@ -4,7 +4,7 @@ var program = require('commander');
 var path = require('path');
 
 program
-.version('0.1.0')
+.version('0.1.1')
 .option('-D, --no-dns', 'Do not resolve DNS')
 .option('-e, --speed <speed>', 'Set the request movement speed', Number, 15)
 .option('-f, --framerate <framerate>', 'Set the rendering canvas frame rate', Number, 30)
