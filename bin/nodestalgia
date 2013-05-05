@@ -60,7 +60,7 @@ app.configure('production', function () {
   if (controllerName === '') {
     controllerName = 'index'; // Default controller
   }
-  var controller = require('./routes/' + controllerName);
+  var controller = require('../routes/' + controllerName);
   controller.setup(app, program);
 });
 
