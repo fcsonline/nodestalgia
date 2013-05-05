@@ -2,7 +2,7 @@
   "author": "Ferran Basora <fcsonline@gmail.com>",
   "name": "nodestalgia",
   "description": "A Logstalgia port with Node.js, Canvas and WebSockets.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/fcsonline/nodestalgia",
   "repository": {
     "type": "git",
